@@ -1,0 +1,35 @@
+---
+const links = [
+  { href: "#about", label: "About" },
+  { href: "#skills", label: "Skills" },
+  { href: "#projects", label: "Projects" },
+  { href: "#contact", label: "Contact" },
+];
+---
+
+<header
+  class="sticky top-0 z-50 backdrop-blur-md bg-[color:var(--color-bg)]/80 border-b border-[color:var(--color-border)]"
+>
+  <nav class="mx-auto max-w-3xl flex items-center justify-between px-6 py-4">
+    <a
+      href="#top"
+      class="font-mono text-sm tracking-tight hover:text-[color:var(--color-accent)] transition-colors"
+    >
+      david.dev
+    </a>
+    <ul class="flex items-center gap-6 text-sm text-[color:var(--color-muted)]">
+      {
+        links.map((link) => (
+          <li>
+            <a
+              href={link.href}
+              class="hover:text-[color:var(--color-fg)] transition-colors"
+            >
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>

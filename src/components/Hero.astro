@@ -1,0 +1,106 @@
+---
+const titles = [
+  "Software",
+  "Frontend",
+  "Backend",
+  "Mobile",
+  "Database",
+  "AI",
+  "Fullstack",
+];
+// Reserve width using the longest word so the layout never shifts when rotating.
+const longest = titles.reduce((a, b) => (a.length >= b.length ? a : b));
+---
+
+<section
+  id="top"
+  class="relative mx-auto max-w-3xl px-6 pt-24 pb-20 sm:pt-32 sm:pb-28"
+>
+  <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:gap-10">
+    <div class="flex-1 min-w-0">
+      <p
+        class="fade-up text-sm text-[color:var(--color-muted)]"
+      >
+        $ whoami
+      </p>
+      <h1
+        class="fade-up mt-3 text-3xl sm:text-5xl font-semibold tracking-tight leading-[1.15]"
+      >
+        Hi, I'm <span class="text-[color:var(--color-accent)] whitespace-nowrap">David Malament</span>.
+      </h1>
+      <p
+        class="fade-up mt-2 text-3xl sm:text-5xl font-semibold tracking-tight leading-[1.15]"
+      >
+        <span
+          class="rotator"
+          data-titles={JSON.stringify(titles)}
+          aria-live="polite"
+        >
+          <span aria-hidden="true" class="invisible whitespace-pre">{longest}</span>
+          <span class="rotator__word absolute inset-0">{titles[0]}</span>
+        </span>
+        <span> Engineer</span>
+      </p>
+      <p
+        class="fade-up mt-6 text-base text-[color:var(--color-muted)] max-w-xl leading-relaxed"
+      >
+        I build fast, thoughtful web products — focused on performance, clean
+        abstractions, and the small details that make software feel right.
+      </p>
+      <div class="fade-up mt-8 flex items-center gap-3">
+        <a
+          href="#projects"
+          class="inline-flex items-center gap-2 rounded-md bg-[color:var(--color-fg)] px-4 py-2 text-sm font-medium text-[color:var(--color-bg)] hover:bg-[color:var(--color-accent)] transition-colors"
+        >
+          ./view-work
+        </a>
+        <a
+          href="#contact"
+          class="inline-flex items-center gap-2 rounded-md border border-[color:var(--color-border)] bg-[color:var(--color-bg)]/60 px-4 py-2 text-sm font-medium text-[color:var(--color-fg)] hover:border-[color:var(--color-accent)] transition-colors"
+        >
+          ./contact
+        </a>
+      </div>
+    </div>
+
+    <div class="fade-up shrink-0 mb-6 sm:mb-0">
+      <div
+        class="relative w-28 h-28 sm:w-40 sm:h-40 rounded-full overflow-hidden border border-[color:var(--color-border)] bg-[color:var(--color-surface)] shadow-sm"
+      >
+        <img
+          src="/profile.jpg"
+          alt="Portrait of David Malament"
+          width="160"
+          height="160"
+          loading="eager"
+          decoding="async"
+          class="w-full h-full object-cover"
+        />
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>(".rotator");
+  if (root) {
+    const titles: string[] = JSON.parse(root.dataset.titles || "[]");
+    const wordEl = root.querySelector<HTMLElement>(".rotator__word");
+    if (wordEl && titles.length > 1) {
+      let i = 0;
+      const next = () => {
+        wordEl.classList.add("is-leaving");
+        wordEl.addEventListener(
+          "animationend",
+          () => {
+            i = (i + 1) % titles.length;
+            wordEl.textContent = titles[i];
+            wordEl.classList.remove("is-leaving");
+          },
+          { once: true },
+        );
+      };
+      setInterval(next, 3000);
+    }
+  }
+</script>
