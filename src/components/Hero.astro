@@ -1,4 +1,7 @@
 ---
+import { Image } from "astro:assets";
+import profile from "../assets/profile.jpg";
+
 const titles = [
   "Software",
   "Frontend",
@@ -63,13 +66,14 @@ const titles = [
       <div
         class="relative w-28 h-28 sm:w-40 sm:h-40 rounded-full overflow-hidden border border-[color:var(--color-border)] bg-[color:var(--color-surface)] shadow-sm"
       >
-        <img
-          src="/profile.jpg"
+        <Image
+          src={profile}
           alt="Portrait of David Malament"
-          width="160"
-          height="160"
+          width={320}
+          height={320}
+          quality={80}
+          format="webp"
           loading="eager"
-          decoding="async"
           class="w-full h-full object-cover"
         />
       </div>
