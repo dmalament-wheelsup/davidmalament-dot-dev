@@ -1,0 +1,168 @@
+---
+interface Company {
+  name: string;
+  href: string;
+  logo?: string;
+  /** Set when the source logo is white-on-transparent and needs inverting on a light bg. */
+  invert?: boolean;
+  /** Optional Tailwind height class to override the default row height for visual balance. */
+  sizeClass?: string;
+  /** Optional vertical nudge (CSS length) to compensate for off-center logo artwork. */
+  nudgeY?: string;
+}
+
+const companies: Company[] = [
+  { name: "Wells Fargo",     href: "https://www.wellsfargo.com/", logo: "/logos/wells-fargo.png", invert: true, sizeClass: "h-4" },
+  { name: "Bank of America", href: "https://www.bankofamerica.com/", logo: "/logos/bank-of-america.svg", nudgeY: "-5px" },
+  { name: "Wheels Up",       href: "https://wheelsup.com/", logo: "/logos/wheels-up.svg", invert: true, sizeClass: "h-4" },
+  { name: "frenos.io",       href: "https://frenos.io/", logo: "/logos/frenos.png", invert: true, sizeClass: "h-5" },
+  { name: "normalsport.com", href: "https://normalsport.com/", logo: "/logos/normalsport.svg" },
+  { name: "fontgear.com",    href: "https://fontgear.com/", logo: "/logos/fontgear.png", sizeClass: "h-9" },
+];
+---
+
+<section
+  aria-labelledby="companies-heading"
+  class="border-y border-[color:var(--color-border)] bg-[color:var(--color-bg)]/40"
+>
+  <div class="mx-auto max-w-3xl px-6 py-8">
+    <p
+      id="companies-heading"
+      class="reveal font-mono text-xs uppercase tracking-[0.18em] text-[color:var(--color-muted)]"
+    >
+      // i've helped teams at
+    </p>
+
+    <div class="reveal mt-5 marquee">
+      <ul class="marquee__track" aria-label="Companies I've worked at">
+        {
+          companies.map((c) => (
+            <li class="marquee__item">
+              <a
+                href={c.href}
+                target="_blank"
+                rel="noopener"
+                aria-label={c.name}
+                class="company-link flex h-full items-center font-mono text-base sm:text-lg font-semibold text-[color:var(--color-muted)] hover:text-[color:var(--color-accent)] transition-colors"
+              >
+                {c.logo ? (
+                  <img
+                    src={c.logo}
+                    alt={c.name}
+                    class:list={["company-logo w-auto", c.sizeClass ?? "h-7", c.invert && "is-inverted"]}
+                    style={c.nudgeY ? `transform: translateY(${c.nudgeY});` : undefined}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  c.name
+                )}
+              </a>
+            </li>
+          ))
+        }
+        {
+          /* Duplicate the list once for seamless looping. aria-hidden so it's not announced twice. */
+          companies.map((c) => (
+            <li class="marquee__item" aria-hidden="true">
+              <a
+                href={c.href}
+                target="_blank"
+                rel="noopener"
+                tabindex="-1"
+                class="company-link flex h-full items-center font-mono text-base sm:text-lg font-semibold text-[color:var(--color-muted)] hover:text-[color:var(--color-accent)] transition-colors"
+              >
+                {c.logo ? (
+                  <img
+                    src={c.logo}
+                    alt=""
+                    class:list={["company-logo w-auto", c.sizeClass ?? "h-7", c.invert && "is-inverted"]}
+                    style={c.nudgeY ? `transform: translateY(${c.nudgeY});` : undefined}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                ) : (
+                  c.name
+                )}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    /* Soft fade on the left/right edges so names don't pop in/out. */
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 6%,
+      #000 94%,
+      transparent 100%
+    );
+            mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 6%,
+      #000 94%,
+      transparent 100%
+    );
+  }
+
+  .marquee__track {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    width: max-content;
+    gap: 4rem;
+    animation: marquee 45s linear infinite;
+  }
+
+  .marquee__item {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    height: 2.5rem;
+  }
+
+  .marquee:hover .marquee__track,
+  .marquee:focus-within .marquee__track {
+    animation-play-state: paused;
+  }
+
+  /* Image logos: dim + grayscale to match muted text marks; full color on hover.
+     mix-blend-mode: multiply hides white backgrounds on logos that aren't transparent. */
+  .company-logo {
+    filter: grayscale(100%) opacity(0.55);
+    mix-blend-mode: multiply;
+    transition: filter 0.2s ease;
+  }
+
+  .company-link:hover .company-logo {
+    filter: grayscale(0%) opacity(1);
+  }
+
+  /* White-on-transparent logos: invert first so they show on the light bg.
+     Hover keeps the inversion (otherwise the logo would flash white). */
+  .company-logo.is-inverted {
+    filter: invert(1) grayscale(100%) opacity(0.55);
+    mix-blend-mode: normal;
+  }
+
+  .company-link:hover .company-logo.is-inverted {
+    filter: invert(1) opacity(0.85);
+  }
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee__track { animation: none; }
+  }
+</style>

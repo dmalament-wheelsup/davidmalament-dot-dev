@@ -8,8 +8,6 @@ const titles = [
   "AI",
   "Fullstack",
 ];
-// Reserve width using the longest word so the layout never shifts when rotating.
-const longest = titles.reduce((a, b) => (a.length >= b.length ? a : b));
 ---
 
 <section
@@ -21,7 +19,7 @@ const longest = titles.reduce((a, b) => (a.length >= b.length ? a : b));
       <p
         class="fade-up text-sm text-[color:var(--color-muted)]"
       >
-        $ whoami
+        > whoami
       </p>
       <h1
         class="fade-up mt-3 text-3xl sm:text-5xl font-semibold tracking-tight leading-[1.15]"
@@ -29,23 +27,20 @@ const longest = titles.reduce((a, b) => (a.length >= b.length ? a : b));
         Hi, I'm <span class="text-[color:var(--color-accent)] whitespace-nowrap">David Malament</span>.
       </h1>
       <p
-        class="fade-up mt-2 text-3xl sm:text-5xl font-semibold tracking-tight leading-[1.15]"
+        class="fade-up mt-2 text-3xl sm:text-5xl font-semibold tracking-tight leading-[1.15] whitespace-nowrap"
       >
-        <span
-          class="rotator"
+        <span class="text-[color:var(--color-muted)]">&gt;</span><span
+          class="rotator ml-[0.35ch]"
           data-titles={JSON.stringify(titles)}
           aria-live="polite"
-        >
-          <span aria-hidden="true" class="invisible whitespace-pre">{longest}</span>
-          <span class="rotator__word absolute inset-0">{titles[0]}</span>
-        </span>
-        <span> Engineer</span>
+          aria-label="Software Engineer"
+        ><span class="rotator__text">{titles[0]}</span><span class="caret" aria-hidden="true"></span></span> Engineer
       </p>
       <p
         class="fade-up mt-6 text-base text-[color:var(--color-muted)] max-w-xl leading-relaxed"
       >
-        I build fast, thoughtful web products — focused on performance, clean
-        abstractions, and the small details that make software feel right.
+        I used to write code by hand. Now I orchestrate agentic AI — tools
+        like Claude Code — to ship more, faster, without compromising on craft.
       </p>
       <div class="fade-up mt-8 flex items-center gap-3">
         <a
@@ -85,22 +80,56 @@ const longest = titles.reduce((a, b) => (a.length >= b.length ? a : b));
   const root = document.querySelector<HTMLElement>(".rotator");
   if (root) {
     const titles: string[] = JSON.parse(root.dataset.titles || "[]");
-    const wordEl = root.querySelector<HTMLElement>(".rotator__word");
-    if (wordEl && titles.length > 1) {
-      let i = 0;
-      const next = () => {
-        wordEl.classList.add("is-leaving");
-        wordEl.addEventListener(
-          "animationend",
-          () => {
-            i = (i + 1) % titles.length;
-            wordEl.textContent = titles[i];
-            wordEl.classList.remove("is-leaving");
-          },
-          { once: true },
-        );
+    const textEl = root.querySelector<HTMLElement>(".rotator__text");
+    const reduce = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const TYPE_MS = 80;
+    const ERASE_MS = 45;
+    const HOLD_AFTER_TYPE = 2000;
+    const HOLD_AFTER_ERASE = 250;
+    const JITTER = 30;
+
+    const sleep = (ms: number) =>
+      new Promise((r) => setTimeout(r, ms + Math.random() * JITTER));
+
+    if (textEl && titles.length > 1 && !reduce) {
+      const setTyping = (typing: boolean) => {
+        document.body.classList.toggle("is-typing", typing);
       };
-      setInterval(next, 3000);
+
+      const run = async () => {
+        let i = 0;
+        // Initial word is already rendered — give the user a moment to read it.
+        await sleep(HOLD_AFTER_TYPE);
+
+        while (true) {
+          const current = titles[i];
+          const next = titles[(i + 1) % titles.length];
+
+          setTyping(true);
+          for (let n = current.length; n >= 0; n--) {
+            textEl.textContent = current.slice(0, n);
+            await sleep(ERASE_MS);
+          }
+          setTyping(false);
+          await sleep(HOLD_AFTER_ERASE);
+
+          setTyping(true);
+          for (let n = 1; n <= next.length; n++) {
+            textEl.textContent = next.slice(0, n);
+            await sleep(TYPE_MS);
+          }
+          setTyping(false);
+
+          root.setAttribute("aria-label", `${next} Engineer`);
+          i = (i + 1) % titles.length;
+          await sleep(HOLD_AFTER_TYPE);
+        }
+      };
+
+      run();
     }
   }
 </script>

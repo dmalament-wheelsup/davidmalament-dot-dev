@@ -21,15 +21,35 @@ html {
 
 body {
   background-color: var(--color-bg);
-  background-image:
-    linear-gradient(to right, var(--color-grid) 1px, transparent 1px),
-    linear-gradient(to bottom, var(--color-grid) 1px, transparent 1px);
-  background-size: 48px 48px;
-  background-attachment: fixed;
   color: var(--color-fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  position: relative;
+}
+
+/* AI-tinted grid: radial color washes painted only on the grid lines. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(50rem 32rem at 12% 8%,  rgba(20, 184, 166, 0.07), transparent 70%),
+    radial-gradient(40rem 30rem at 88% 18%, rgba(124, 58, 237, 0.06), transparent 70%),
+    radial-gradient(36rem 28rem at 70% 92%, rgba(244, 114, 182, 0.05), transparent 70%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.06));
+  -webkit-mask-image:
+    linear-gradient(to right, #000 1px, transparent 1px),
+    linear-gradient(to bottom, #000 1px, transparent 1px);
+  -webkit-mask-size: 48px 48px, 48px 48px;
+  -webkit-mask-composite: source-over;
+          mask-image:
+    linear-gradient(to right, #000 1px, transparent 1px),
+    linear-gradient(to bottom, #000 1px, transparent 1px);
+          mask-size: 48px 48px, 48px 48px;
+          mask-composite: add;
 }
 
 ::selection {
@@ -65,33 +85,32 @@ body {
   transform: none;
 }
 
-/* Rotating word: fixed-width slot prevents layout shift; word animates in/out. */
-@keyframes word-in {
-  from { opacity: 0; transform: translateY(0.4em); filter: blur(4px); }
-  to   { opacity: 1; transform: translateY(0);     filter: blur(0); }
-}
-
-@keyframes word-out {
-  from { opacity: 1; transform: translateY(0);      filter: blur(0); }
-  to   { opacity: 0; transform: translateY(-0.4em); filter: blur(4px); }
-}
-
+/* Typewriter: word flows naturally; "Engineer" shifts with the typed length. */
 .rotator {
   display: inline-block;
-  position: relative;
   vertical-align: baseline;
-  text-align: right;
   color: var(--color-accent);
 }
 
-.rotator__word {
-  display: inline-block;
-  text-align: right;
-  animation: word-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+@keyframes caret-blink {
+  0%, 49%   { opacity: 1; }
+  50%, 100% { opacity: 0; }
 }
 
-.rotator__word.is-leaving {
-  animation: word-out 0.35s cubic-bezier(0.55, 0, 0.7, 0) both;
+.caret {
+  display: inline-block;
+  width: 0.55ch;
+  height: 0.95em;
+  background-color: currentColor;
+  vertical-align: -0.12em;
+  margin-left: 0.05ch;
+  animation: caret-blink 1s steps(1) infinite;
+}
+
+/* Pause caret blinking while actively typing/erasing for a more authentic feel. */
+.is-typing .caret {
+  animation: none;
+  opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -103,8 +122,8 @@ body {
     animation: none;
     transition: none;
   }
-  .rotator__word,
-  .rotator__word.is-leaving {
+  .caret {
     animation: none;
+    opacity: 1;
   }
 }
