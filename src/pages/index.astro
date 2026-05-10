@@ -6,7 +6,7 @@ import Companies from "../components/Companies.astro";
 import Section from "../components/Section.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import Footer from "../components/Footer.astro";
-import { projects, skills } from "../data/projects";
+import { projects } from "../data/projects";
 ---
 
 <Layout>
@@ -52,12 +52,15 @@ import { projects, skills } from "../data/projects";
       </div>
     </Section>
 
+    */}
+
     <Section id="projects" eyebrow="Selected work" title="Things I've built.">
       <div class="grid gap-4 sm:grid-cols-2">
         {projects.map((p) => <ProjectCard project={p} />)}
       </div>
     </Section>
 
+    {/* TODO: re-enable once content is finalized.
     <Section id="contact" eyebrow="Contact" title="Let's talk.">
       <p class="text-[color:var(--color-muted)] leading-relaxed">
         The fastest way to reach me is email. I'm always happy to chat about
