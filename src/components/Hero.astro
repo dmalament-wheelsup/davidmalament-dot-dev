@@ -1,15 +1,18 @@
 ---
-import { Image } from "astro:assets";
-import profile from "../assets/profile.jpg";
+import { Image } from 'astro:assets';
+import profile from '../assets/profile.jpg';
 
 const titles = [
-  "Software",
-  "Frontend",
-  "Backend",
-  "Mobile",
-  "Database",
-  "AI",
-  "Fullstack",
+  'Software',
+  'Frontend',
+  'Backend',
+  'Design',
+  'Mobile',
+  'Database',
+  'Product',
+  'AI',
+  'UX',
+  'Fullstack',
 ];
 ---
 
@@ -19,15 +22,13 @@ const titles = [
 >
   <div class="flex flex-col-reverse sm:flex-row sm:items-center sm:gap-10">
     <div class="flex-1 min-w-0">
-      <p
-        class="fade-up text-sm text-[color:var(--color-muted)]"
-      >
-        > whoami
-      </p>
+      <p class="fade-up text-sm text-[color:var(--color-muted)]">> whoami</p>
       <h1
         class="fade-up mt-3 text-3xl sm:text-5xl font-semibold tracking-tight leading-[1.15]"
       >
-        Hi, I'm <span class="text-[color:var(--color-accent)] whitespace-nowrap">David Malament</span>.
+        Hi, I'm <span class="text-[color:var(--color-accent)] whitespace-nowrap"
+          >David Malament</span
+        >.
       </h1>
       <p
         class="fade-up mt-2 text-3xl sm:text-5xl font-semibold tracking-tight leading-[1.15] whitespace-nowrap"
@@ -37,7 +38,10 @@ const titles = [
           data-titles={JSON.stringify(titles)}
           aria-live="polite"
           aria-label="Software Engineer"
-        ><span class="rotator__text">{titles[0]}</span><span class="caret" aria-hidden="true"></span></span> Engineer
+          ><span class="rotator__text">{titles[0]}</span><span
+            class="caret"
+            aria-hidden="true"></span></span
+        > Engineer
       </p>
       <p
         class="fade-up mt-6 text-base text-[color:var(--color-muted)] max-w-xl leading-relaxed"
@@ -47,14 +51,16 @@ const titles = [
         product itself.
       </p>
       <div class="fade-up mt-8 flex items-center gap-3">
-        {/* TODO: re-enable once the projects section is restored.
+        {
+          /* TODO: re-enable once the projects section is restored.
         <a
           href="#projects"
           class="inline-flex items-center gap-2 rounded-md bg-[color:var(--color-fg)] px-4 py-2 text-sm font-medium text-[color:var(--color-bg)] hover:bg-[color:var(--color-accent)] transition-colors"
         >
           view-work
         </a>
-        */}
+        */
+        }
         <a
           href="mailto:david.malament@gmail.com"
           class="inline-flex items-center gap-2 rounded-md bg-[color:var(--color-fg)] px-4 py-2 text-sm font-medium text-[color:var(--color-bg)] hover:bg-[color:var(--color-accent)] transition-colors"
@@ -84,12 +90,12 @@ const titles = [
 </section>
 
 <script>
-  const root = document.querySelector<HTMLElement>(".rotator");
+  const root = document.querySelector<HTMLElement>('.rotator');
   if (root) {
-    const titles: string[] = JSON.parse(root.dataset.titles || "[]");
-    const textEl = root.querySelector<HTMLElement>(".rotator__text");
+    const titles: string[] = JSON.parse(root.dataset.titles || '[]');
+    const textEl = root.querySelector<HTMLElement>('.rotator__text');
     const reduce = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
+      '(prefers-reduced-motion: reduce)',
     ).matches;
 
     const TYPE_MS = 80;
@@ -103,7 +109,7 @@ const titles = [
 
     if (textEl && titles.length > 1 && !reduce) {
       const setTyping = (typing: boolean) => {
-        document.body.classList.toggle("is-typing", typing);
+        document.body.classList.toggle('is-typing', typing);
       };
 
       const run = async () => {
@@ -130,7 +136,7 @@ const titles = [
           }
           setTyping(false);
 
-          root.setAttribute("aria-label", `${next} Engineer`);
+          root.setAttribute('aria-label', `${next} Engineer`);
           i = (i + 1) % titles.length;
           await sleep(HOLD_AFTER_TYPE);
         }
